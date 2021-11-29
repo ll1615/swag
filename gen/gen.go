@@ -129,12 +129,6 @@ func (g *Gen) Build(config *Config) error {
 	jsonFileName := filepath.Join(config.OutputDir, "swagger.json")
 	yamlFileName := filepath.Join(config.OutputDir, "swagger.yaml")
 
-	docs, err := os.Create(docFileName)
-	if err != nil {
-		return err
-	}
-	defer docs.Close()
-
 	err = g.writeFile(b, jsonFileName)
 	if err != nil {
 		return err
@@ -151,6 +145,12 @@ func (g *Gen) Build(config *Config) error {
 	}
 
 	if !config.NoGenerateGoFile {
+		docs, err := os.Create(docFileName)
+		if err != nil {
+			return err
+		}
+		defer docs.Close()
+
 		// Write doc
 		err = g.writeGoDoc(packageName, docs, swagger, config)
 		if err != nil {
