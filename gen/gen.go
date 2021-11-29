@@ -78,6 +78,9 @@ type Config struct {
 
 	// GeneratedTime whether swag should generate the timestamp at the top of docs.go
 	GeneratedTime bool
+
+	// NoGenerateGoFile whether stopping generate docs.go
+	NoGenerateGoFile bool
 }
 
 // Build builds swagger json file  for given searchDir and mainAPIFile. Returns json
@@ -147,13 +150,16 @@ func (g *Gen) Build(config *Config) error {
 		return err
 	}
 
-	// Write doc
-	err = g.writeGoDoc(packageName, docs, swagger, config)
-	if err != nil {
-		return err
+	if !config.NoGenerateGoFile {
+		// Write doc
+		err = g.writeGoDoc(packageName, docs, swagger, config)
+		if err != nil {
+			return err
+		}
+
+		log.Printf("create docs.go at %+v", docFileName)
 	}
 
-	log.Printf("create docs.go at %+v", docFileName)
 	log.Printf("create swagger.json at %+v", jsonFileName)
 	log.Printf("create swagger.yaml at %+v", yamlFileName)
 
